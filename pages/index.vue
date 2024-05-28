@@ -1,6 +1,6 @@
 <template>
   <div class="relative z-10 max-w-screen-sm">
-    <p v-if="user" class="fVeafc in">Hi {{ user.user_metadata.first_name }}</p>
+    <p v-if="user" class="fVeafc in">Hi {{ user.user_metadata?.first_name }}</p>
     <p v-else class="fVeafc">unauthenticated</p>
     <h1 class="kKxhrq">
       Nuxt3 + Supabase
@@ -8,7 +8,7 @@
       Starter Template
     </h1>
     <p class="kRTmDC">
-      Authentication template with email and password, using Supabase. If you want to a quick start to your next Nuxt3 app, please feel free to use this template.
+      Authentication template with email and password, using Supabase. If you want a quick start to your next Nuxt3 app, please feel free to use this template.
     </p>
     <div class="uQxNj" v-if="user">
       <button @click="logout" class="ieMfVH" :disabled="loading">
@@ -21,6 +21,10 @@
             <circle cx="8" cy="8" r="6" class="VFMrX"></circle>
           </g>
         </svg>
+      </button>
+      <input type="text" ref="" placeholder="Restaurant Name" v-model="restaurantname">
+      <button @click="test" class="ieMfVH">
+        Démarrer la function
       </button>
     </div>
     <div class="uQxNj" v-else>
@@ -44,24 +48,43 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
-const client = useSupabaseAuthClient()
-const user = useSupabaseUser()
-const loading = ref(false)
+import { ref } from 'vue';
+
+const restaurantname = ref('NomDuRestaurant');
+const client = useSupabaseAuthClient();
+const user = useSupabaseUser();
+const loading = ref(false);
 
 const logout = async () => {
-  loading.value = true
-  const { error } = await client.auth.signOut()
+  loading.value = true;
+  const { error } = await client.auth.signOut();
   if (error) {
-    loading.value = false
-    return alert('Something went wrong !')
+    loading.value = false;
+    return alert('Something went wrong !');
   }
-}
+};
 
-useHead({
-  title: 'supaAuth',
-  meta: [
-    { name: 'description', content: 'Authentication template with email and password, using Supabase. If you want to a quick start to your next Nuxt3 app, please feel free to use this template.' }
-  ]
-})
+const test = async () => {
+   const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: restaurantname.value
+    }),
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch('https://vcunoktdyspfhjehyyyq.supabase.co/functions/v1/hello-world', requestOptions);
+    const data = await response.text();
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 </script>
+
