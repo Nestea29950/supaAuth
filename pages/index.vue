@@ -1,79 +1,90 @@
 <template>
-  <div class="relative z-10 max-w-screen-sm">
-    <p v-if="user" class="fVeafc in">Bonjour {{ user.user_metadata?.first_name }}</p>
-    <p v-else class="fVeafc">unauthenticated</p>
-    <h1 class="kKxhrq">
-      Nuxt3 + Supabase
-      
-    </h1>
-    <p class="kRTmDC">
-      Cloud Controle </p>
-    <div class="uQxNj" v-if="user">
-      <button @click="logout" class="ieMfVH" :disabled="loading">
-        <span class="fKlELC" :class="{loading: loading}">
+  <div class="relative z-10 max-w-screen-sm mx-auto p-4">
+    <p v-if="user" class="text-lg">Bonjour {{ user.user_metadata?.first_name }}</p>
+    <p v-else class="text-lg">unauthenticated</p>
+    <h1 class="text-2xl font-bold my-4">FunParadis</h1>
+    
+    <div v-if="user" class="mb-4">
+      <button @click="logout" class="btn" :disabled="loading">
+        <span :class="{loading: loading}">
           Log out
         </span>
-        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="jjoFVh" :class="{loading: loading}">
-          <g fill="none" stroke-width="1.5" stroke-linecap="round" class="faEWLr" style="stroke: var(--icon-color);">
-            <circle stroke-opacity=".2" cx="8" cy="8" r="6"></circle>
-            <circle cx="8" cy="8" r="6" class="VFMrX"></circle>
-          </g>
-        </svg>
       </button>
-      <input type="text" ref="" placeholder="Restaurant Name" v-model="restaurantname">
-      <button @click="test" class="ieMfVH">
-        Démarrer la function
+      <input type="text" placeholder="Grand mobile home noir" v-model="restaurantname" class="input mt-2">
+      <button @click="test" class="btn mt-2">
+        Exemple de function en cloud pour créer un mobile home
       </button>
     </div>
-    <div class="uQxNj" v-else>
-      <NuxtLink class="bQRHNT" to="/login">
-        <span class="fKlELC">
-          Login 
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="taKtSf">
-            <path class="chevron" d="M8 13L13 8L8 3" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"></path>
-            <path class="stem" d="M12 8L2 8" stroke-width="1.5"></path>
-          </svg>
-        </span>
-      </NuxtLink>
+    <div v-else>
+      <NuxtLink class="btn" to="/login">Login</NuxtLink>
       <NuxtLink to="/register">
-        <button class="ieMfVH">
-          <span class="fKlELC">
-            Sign up
-          </span>
-        </button>
+        <button class="btn">Sign up</button>
       </NuxtLink>
     </div>
+    <div v-if="goodies.length" class="grid grid-cols-1 gap-4 mt-4">
+      <div v-for="goodie in goodies" :key="goodie.id" class="p-4 border rounded shadow-sm">
+        <h2 class="text-xl font-semibold">{{ goodie.nom }}</h2>
+        <p class="text-lg">{{ goodie.prix }} €</p>
+      </div>
+    </div>
+    <p v-else class="text-lg mt-4">No goodies available.</p>
   </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue';
 
-<script setup lang="ts">
-import { ref } from 'vue';
 
-const restaurantname = ref('NomDuRestaurant');
+const restaurantname = ref('');
 const client = useSupabaseAuthClient();
-const user = useSupabaseUser();
 const loading = ref(false);
+const goodies = ref([]);
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+
+
+const fetchGoodies = async () => {
+  try {
+    
+let { data: Goodies, error } = await supabase
+  .from('Goodies')
+  .select('*')
+          
+
+    if (error) {
+      console.error('Error fetching goodies:', error);
+    } else {
+      console.log('ezaezaeza' + Goodies)
+      goodies.value = Goodies;
+    }
+  } catch (err) {
+    console.error('Unexpected error fetching goodies:', err);
+  }
+};
+
+onMounted( async () => {
+  fetchGoodies();
+  
+
+});
 
 const logout = async () => {
   loading.value = true;
   const { error } = await client.auth.signOut();
   if (error) {
     loading.value = false;
-    return alert('Something went wrong !');
+    return alert('Something went wrong!');
   }
+  loading.value = false;
 };
 
 const test = async () => {
-   const requestOptions = {
+  const requestOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      name: restaurantname.value
-    }),
-    redirect: 'follow'
+    body: JSON.stringify({ name: restaurantname.value }),
   };
 
   try {
@@ -86,3 +97,14 @@ const test = async () => {
 };
 </script>
 
+<style>
+.btn {
+  @apply px-4 py-2 bg-blue-500 text-white rounded;
+}
+.btn:disabled {
+  @apply bg-gray-500;
+}
+.input {
+  @apply px-4 py-2 border rounded w-full;
+}
+</style>

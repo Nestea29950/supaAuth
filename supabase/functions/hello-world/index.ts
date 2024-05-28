@@ -8,12 +8,12 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL");
 const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Function to insert a restaurant
-async function insertRestaurant(name: string) {
+// Function to insert a Mobilehome
+async function insertMobilehome(name: string) {
   try {
-    // Insert data into 'restaurant' table
+    // Insert data into 'Mobilehome' table
     const { data, error } = await supabase
-      .from('restaurant')
+      .from('Mobilehome')
       .insert([{ nom: name }])
       .select();
 
@@ -40,13 +40,13 @@ Deno.serve(async (req) => {
     // Parse request body
     const { name } = await req.json();
 
-    // Insert restaurant
-    const insertResult = await insertRestaurant(name);
+    // Insert Mobilehome
+    const insertResult = await insertMobilehome(name);
 
     // Construct response
     const responseData = insertResult.error
       ? { error: insertResult.error }
-      : { message: `Restaurant ${name} inserted successfully`, restaurant: insertResult.data };
+      : { message: `Mobilehome ${name} inserted successfully`, Mobilehome: insertResult.data };
 
     // Return response
     return new Response(JSON.stringify(responseData), {
