@@ -43,7 +43,7 @@
   transition: all 300ms linear;
   will-change: max-height, opacity;
   max-height: 160px;
-  overflow: hidden;
+  
   opacity: 1;
 }
 .scale-y-enter-from,
