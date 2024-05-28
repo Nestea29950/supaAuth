@@ -1,15 +1,13 @@
 <template>
   <div class="relative z-10 max-w-screen-sm">
-    <p v-if="user" class="fVeafc in">Hi {{ user.user_metadata?.first_name }}</p>
+    <p v-if="user" class="fVeafc in">Bonjour {{ user.user_metadata?.first_name }}</p>
     <p v-else class="fVeafc">unauthenticated</p>
     <h1 class="kKxhrq">
       Nuxt3 + Supabase
-      <br>
-      Starter Template
+      
     </h1>
     <p class="kRTmDC">
-      Authentication template with email and password, using Supabase. If you want a quick start to your next Nuxt3 app, please feel free to use this template.
-    </p>
+      Cloud Controle </p>
     <div class="uQxNj" v-if="user">
       <button @click="logout" class="ieMfVH" :disabled="loading">
         <span class="fKlELC" :class="{loading: loading}">
